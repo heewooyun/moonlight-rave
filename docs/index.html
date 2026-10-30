@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Moonlight Rave</title>
+    <meta name="description" content="여름 밤 달빛 아래 야외 레이브 — 과거와 미래 사이의 질문을 네온 키네틱 타이포로 그린 30초 Shorts" />
+    <meta property="og:title" content="Moonlight Rave" />
+    <meta property="og:description" content="달빛 아래, 우리는 — 프렌치 하우스 · 트론풍 네온 키네틱 타이포 · 30초" />
+    <meta property="og:image" content="poster.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ground: #02030a;
+        --cyan: #3ff6ff;
+        --magenta: #ff3fd8;
+        --ink: #eaffff;
+        --muted: #8a93b8;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse at 50% 120%, rgba(255, 63, 216, 0.28), transparent 60%),
+          radial-gradient(ellipse at 50% 0%, rgba(18, 35, 90, 0.7), transparent 70%),
+          linear-gradient(rgba(63, 246, 255, 0.06) 1px, transparent 1px) 0 0 / 100% 40px,
+          var(--ground);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 16px 48px;
+        gap: 20px;
+      }
+      h1 {
+        font-family: "Oswald", sans-serif;
+        font-weight: 700;
+        font-size: clamp(32px, 8vw, 56px);
+        letter-spacing: 0.16em;
+        color: #f2feff;
+        text-shadow: 0 0 10px var(--cyan), 0 0 34px var(--cyan);
+        text-align: center;
+      }
+      .tag {
+        font-family: "Space Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.4em;
+        color: var(--cyan);
+        opacity: 0.8;
+      }
+      .frame {
+        width: min(100%, 880px, calc((100vh - 240px) * 4 / 3));
+        min-width: 280px;
+        aspect-ratio: 4 / 3;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 0 0 1px rgba(63, 246, 255, 0.35), 0 0 40px rgba(63, 246, 255, 0.25), 0 24px 90px rgba(255, 63, 216, 0.22);
+      }
+      video { width: 100%; height: 100%; display: block; object-fit: cover; }
+      p { color: var(--muted); font-size: 14px; text-align: center; max-width: 560px; line-height: 1.7; }
+      a { color: var(--magenta); }
+    </style>
+  </head>
+  <body>
+    <div class="tag">SECTOR 07 // OPEN AIR</div>
+    <h1>MOONLIGHT RAVE</h1>
+    <div class="frame">
+      <video src="moonlight-rave.mp4" poster="poster.jpg" controls playsinline loop preload="metadata"></video>
+    </div>
+    <p>여름 밤 달빛 아래 야외 레이브 · 과거와 미래 사이의 질문들<br />
+      프렌치 하우스 · 트론풍 네온 키네틱 타이포 · 4:3 · 30초<br />
+      <a href="moonlight-rave.mp4" download>MP4 다운로드</a></p>
+  </body>
+</html>

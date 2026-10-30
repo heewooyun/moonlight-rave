@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>Moonlight Rave</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "KR Sans";
+        src: local("Apple SD Gothic Neo Bold"), local("AppleSDGothicNeo-Bold");
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: "KR Sans";
+        src: local("Apple SD Gothic Neo Heavy"), local("AppleSDGothicNeo-Heavy");
+        font-weight: 900;
+      }
+      :root {
+        --cyan: #3ff6ff;
+        --magenta: #ff3fd8;
+        --amber: #ffb547;
+        --ink: #02030a;
+      }
+      html, body { margin: 0; background: var(--ink); }
+      #root {
+        position: relative;
+        width: 1440px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ink);
+        font-family: "KR Sans", "Montserrat", sans-serif;
+        color: #eaffff;
+      }
+      .full { position: absolute; inset: 0; }
+
+      #sky {
+        background:
+          radial-gradient(ellipse 70% 55% at 50% 62%, #12235a 0%, #070a24 45%, var(--ink) 80%);
+      }
+      #stars .s {
+        position: absolute;
+        width: 3px; height: 3px; border-radius: 50%;
+        background: #cfe9ff;
+        box-shadow: 0 0 6px #9fd8ff;
+      }
+      #moon {
+        position: absolute;
+        left: 980px; top: 110px;
+        width: 220px; height: 220px; border-radius: 50%;
+        background: radial-gradient(circle at 38% 36%, #ffffff 0%, #dff6ff 35%, #9ad6ff 70%, #5aa8ff 100%);
+        box-shadow: 0 0 60px 18px rgba(140, 220, 255, 0.55), 0 0 220px 80px rgba(80, 160, 255, 0.25);
+      }
+      #moon-ring {
+        position: absolute;
+        left: 930px; top: 60px;
+        width: 316px; height: 316px; border-radius: 50%;
+        border: 2px solid rgba(63, 246, 255, 0.55);
+        box-shadow: 0 0 24px rgba(63, 246, 255, 0.6), inset 0 0 24px rgba(63, 246, 255, 0.4);
+      }
+
+      #floor {
+        position: absolute;
+        left: -50%; right: -50%;
+        top: 640px; height: 900px;
+        perspective: 420px;
+        perspective-origin: 50% 0%;
+      }
+      #floor-plane {
+        position: absolute; inset: 0;
+        transform-origin: 50% 0%;
+        transform: rotateX(62deg);
+      }
+      #grid {
+        position: absolute; inset: 0;
+        background-image:
+          linear-gradient(to right, rgba(63, 246, 255, 0.85) 2px, transparent 2px),
+          linear-gradient(to bottom, rgba(63, 246, 255, 0.85) 2px, transparent 2px);
+        background-size: 90px 90px;
+        filter: drop-shadow(0 0 6px rgba(63, 246, 255, 0.9));
+      }
+      #floor-fade {
+        position: absolute; left: 0; right: 0; top: 630px; height: 140px;
+        background: linear-gradient(to bottom, var(--ink) 0%, rgba(2, 3, 10, 0) 100%);
+      }
+      #horizon {
+        position: absolute; left: 0; right: 0; top: 638px; height: 3px;
+        background: var(--magenta);
+        box-shadow: 0 0 18px 4px var(--magenta), 0 0 60px 10px rgba(255, 63, 216, 0.5);
+      }
+
+      #lasers .beam {
+        position: absolute;
+        left: 718px; top: -340px;
+        width: 4px; height: 980px;
+        border-radius: 2px;
+        mix-blend-mode: screen;
+      }
+      #lasers .c { background: linear-gradient(to top, var(--cyan), rgba(63, 246, 255, 0)); box-shadow: 0 0 14px 3px var(--cyan); }
+      #lasers .m { background: linear-gradient(to top, var(--magenta), rgba(255, 63, 216, 0)); box-shadow: 0 0 14px 3px var(--magenta); }
+
+      #flash { background: radial-gradient(circle at 50% 60%, rgba(63, 246, 255, 0.35), rgba(255, 63, 216, 0.12) 50%, transparent 75%); opacity: 0; }
+      #scan {
+        background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 5px);
+        mix-blend-mode: overlay;
+      }
+      #vignette { background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.75) 100%); }
+
+      .line {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 18px;
+        padding-bottom: 120px;
+        text-align: center;
+      }
+      .drift { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+      .row { display: block; white-space: nowrap; }
+      .ch { display: inline-block; will-change: transform, opacity, filter; }
+      .big {
+        font-size: 104px; font-weight: 900; letter-spacing: 0.02em;
+        color: #f2feff;
+        text-shadow: 0 0 10px var(--cyan), 0 0 34px var(--cyan), 0 0 80px rgba(63, 246, 255, 0.6);
+      }
+      .mid {
+        font-size: 70px; font-weight: 700;
+        color: #ffe9fb;
+        text-shadow: 0 0 10px var(--magenta), 0 0 36px var(--magenta);
+      }
+      .latin {
+        font-family: "Oswald", sans-serif;
+        font-size: 150px; font-weight: 700; letter-spacing: 0.18em;
+        color: #f2feff;
+        text-shadow: 0 0 12px var(--cyan), 0 0 44px var(--cyan), 0 0 110px rgba(63, 246, 255, 0.7);
+      }
+      .tag {
+        font-family: "Space Mono", "KR Sans", monospace;
+        font-size: 40px; font-weight: 700; letter-spacing: 0.35em;
+        color: var(--amber);
+        text-shadow: 0 0 12px rgba(255, 181, 71, 0.8);
+      }
+      .huge {
+        font-family: "Oswald", sans-serif;
+        font-size: 300px; font-weight: 700; letter-spacing: 0.12em; line-height: 1;
+        color: #fff;
+        text-shadow: 0 0 16px var(--magenta), 0 0 60px var(--magenta), 0 0 140px rgba(255, 63, 216, 0.7);
+      }
+      #hud {
+        position: absolute; left: 110px; right: 110px; top: 84px;
+        display: flex; justify-content: space-between;
+        font-family: "Space Mono", monospace; font-size: 22px; letter-spacing: 0.3em;
+        color: rgba(63, 246, 255, 0.85);
+        text-shadow: 0 0 8px var(--cyan);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1440" data-height="1080">
+      <div id="sky" class="full"></div>
+      <div id="stars" class="full" data-layout-ignore></div>
+      <div id="moon-ring" data-layout-ignore></div>
+      <div id="moon" data-layout-ignore></div>
+      <div id="floor" data-layout-ignore><div id="floor-plane"><div id="grid"></div></div></div>
+      <div id="floor-fade" data-layout-ignore></div>
+      <div id="horizon" data-layout-ignore></div>
+      <div id="lasers" class="full" data-layout-ignore>
+        <div class="beam c"></div><div class="beam m"></div><div class="beam c"></div>
+        <div class="beam m"></div><div class="beam c"></div><div class="beam m"></div>
+      </div>
+      <div id="flash" class="full" data-layout-ignore></div>
+
+      <div id="hud" data-layout-allow-overlap>
+        <span id="hud-l">SECTOR 07 // OPEN AIR</span>
+        <span id="hud-r">T+00:00</span>
+      </div>
+
+      <!-- 0–4s: title -->
+      <div id="l1" class="clip line" data-start="0" data-duration="4" data-track-index="2">
+        <div class="drift"><div class="row latin split">MOONLIGHT</div><div class="row tag split">달빛 아래, 우리는</div></div>
+      </div>
+      <!-- 4–8s -->
+      <div id="l2" class="clip line" data-start="4" data-duration="4" data-track-index="2">
+        <div class="drift"><div class="row mid split">어제의 나는</div><div class="row big split">여기까지 오려고 했을까</div></div>
+      </div>
+      <!-- 8–12s -->
+      <div id="l3" class="clip line" data-start="8" data-duration="4" data-track-index="2">
+        <div class="drift"><div class="row mid split">내일의 나는</div><div class="row big split">지금의 나를 기억할까</div></div>
+      </div>
+      <!-- 12–15s: breakdown, weightless -->
+      <div id="l4" class="clip line" data-start="12" data-duration="3" data-track-index="2">
+        <div class="drift"><div class="row big split">과거는 리듬이 되고</div></div>
+      </div>
+      <!-- 15–19s: drop -->
+      <div id="l5" class="clip line" data-start="15" data-duration="4" data-track-index="2">
+        <div class="drift"><div class="row big split">미래는 아직</div><div class="row mid split">비트 사이에 있다</div></div>
+      </div>
+      <!-- 19–23s -->
+      <div id="l6" class="clip line" data-start="19" data-duration="4" data-track-index="2">
+        <div class="drift"><div class="row tag split">QUESTION // 07</div><div class="row big split">그렇다면, 지금은?</div></div>
+      </div>
+      <!-- 23–27s -->
+      <div id="l7" class="clip line" data-start="23" data-duration="4" data-track-index="2">
+        <div class="drift"><div class="row mid split">춤추는 이 순간만이</div><div class="row big split">유일한 현재</div></div>
+      </div>
+      <!-- 27–30s -->
+      <div id="l8" class="clip line" data-start="27" data-duration="3" data-track-index="2">
+        <div class="drift"><div class="row huge split">NOW</div><div class="row tag split">지금, 여기</div></div>
+      </div>
+
+      <div id="scan" class="full" data-layout-ignore></div>
+      <div id="vignette" class="full" data-layout-ignore></div>
+
+      <audio id="music" class="clip" data-start="0" data-duration="30" data-track-index="0" data-volume="1" src="assets/music.wav"></audio>
+    </div>
+
+    <script>
+      // Deterministic RNG for decorative stars
+      let seed = 1337;
+      const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
+      const stars = document.getElementById("stars");
+      for (let i = 0; i < 110; i++) {
+        const s = document.createElement("span");
+        s.className = "s";
+        s.style.left = (rnd() * 1440).toFixed(1) + "px";
+        s.style.top = (rnd() * 620).toFixed(1) + "px";
+        s.style.opacity = (0.3 + rnd() * 0.7).toFixed(2);
+        const sz = 1 + rnd() * 3;
+        s.style.width = s.style.height = sz.toFixed(1) + "px";
+        stars.appendChild(s);
+      }
+
+      // Split text rows into characters for kinetic animation
+      document.querySelectorAll(".split").forEach((row) => {
+        const text = row.textContent;
+        row.textContent = "";
+        for (const c of text) {
+          const span = document.createElement("span");
+          span.className = "ch";
+          span.textContent = c === " " ? " " : c;
+          row.appendChild(span);
+        }
+      });
+
+      const BEAT = 0.5, DROP = 15;
+      const tl = gsap.timeline({ paused: true });
+      const chars = (sel) => gsap.utils.toArray(sel + " .ch");
+
+      // ---- World motion: flying over the grid, drifting through space ----
+      tl.fromTo("#grid", { backgroundPosition: "0px 0px" }, { backgroundPosition: "0px 2700px", duration: 15, ease: "none" }, 0);
+      tl.to("#grid", { backgroundPosition: "0px 8100px", duration: 15, ease: "none" }, 15);
+      tl.fromTo("#stars", { x: 0, y: 0, scale: 1 }, { x: -60, y: 24, scale: 1.12, duration: 30, ease: "none" }, 0);
+      tl.fromTo("#moon", { x: 0, y: 0 }, { x: -70, y: 40, duration: 30, ease: "sine.inOut" }, 0);
+      tl.fromTo("#moon-ring", { rotation: 0, scale: 0.9, opacity: 0.4 }, { rotation: 180, scale: 1.08, opacity: 0.9, duration: 30, ease: "none" }, 0);
+      tl.fromTo("#horizon", { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "expo.out" }, 0.1);
+
+      // ---- Lasers: fan sweeps, faster after the drop ----
+      const beams = gsap.utils.toArray("#lasers .beam");
+      gsap.set(beams, { transformOrigin: "50% 100%" });
+      beams.forEach((b, i) => {
+        const base = (i - 2.5) * 16;
+        tl.fromTo(b, { rotation: base * 0.2, opacity: 0 }, { rotation: base, opacity: 0.55, duration: 4, ease: "sine.inOut" }, 3.5);
+        tl.to(b, { rotation: -base, duration: 1.75, ease: "sine.inOut", yoyo: true, repeat: 3 }, 7.5);
+        tl.to(b, { opacity: 0.15, duration: 0.6 }, 13);
+        tl.to(b, { rotation: base * 1.4, opacity: 0.9, duration: 1, ease: "sine.inOut", yoyo: true, repeat: 11 }, DROP);
+        tl.to(b, { opacity: 0, duration: 1.5 }, 27.5);
+      });
+
+      // ---- Beat pulses after the drop ----
+      for (let t = DROP; t < 27.5; t += BEAT) {
+        tl.fromTo("#flash", { opacity: 0.85 }, { opacity: 0, duration: 0.42, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo("#horizon", { scaleY: 3 }, { scaleY: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, t);
+      }
+      for (let t = 4; t < 13; t += BEAT) {
+        tl.fromTo("#flash", { opacity: 0.25 }, { opacity: 0, duration: 0.4, ease: "power2.out", immediateRender: false }, t);
+      }
+
+      // HUD timer
+      const hudR = document.getElementById("hud-r");
+      const clock = { t: 0 };
+      tl.fromTo(clock, { t: 0 }, {
+        t: 30, duration: 30, ease: "none",
+        onUpdate: () => { hudR.textContent = "T+00:" + String(Math.floor(clock.t)).padStart(2, "0"); },
+      }, 0);
+      tl.fromTo("#hud", { opacity: 0 }, { opacity: 1, duration: 1 }, 0.5);
+
+      // ---- Kinetic type ----
+      // every line floats like it's in zero-g while visible
+      const floatLine = (id, start, dur) => {
+        tl.fromTo(`#${id} .drift`, { y: 14, rotation: -1.2, scale: 0.98 }, { y: -14, rotation: 1.2, scale: 1.03, duration: dur, ease: "sine.inOut" }, start);
+      };
+      const exitLine = (id, at) => {
+        tl.to(`#${id} .ch`, { opacity: 0, y: -40, filter: "blur(12px)", scale: 1.3, duration: 0.45, stagger: 0.012, ease: "power2.in" }, at);
+      };
+
+      // L1 title: letters fly in from deep space
+      tl.fromTo(chars("#l1 .latin"), { opacity: 0, scale: 4, z: 0, filter: "blur(20px)", y: -60 },
+        { opacity: 1, scale: 1, filter: "blur(0px)", y: 0, duration: 1.1, stagger: 0.07, ease: "expo.out" }, 0.3);
+      tl.fromTo(chars("#l1 .tag"), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: "power3.out" }, 1.4);
+      floatLine("l1", 0, 4);
+      exitLine("l1", 3.4);
+
+      // L2: past — slides in from the left, skewed like a memory
+      tl.fromTo(chars("#l2 .mid"), { opacity: 0, x: -120, skewX: 30 }, { opacity: 1, x: 0, skewX: 0, duration: 0.6, stagger: 0.05, ease: "power4.out" }, 4.1);
+      tl.fromTo(chars("#l2 .big"), { opacity: 0, y: 80, rotationX: -90 }, { opacity: 1, y: 0, rotationX: 0, duration: 0.7, stagger: 0.045, ease: "back.out(1.6)" }, 4.6);
+      floatLine("l2", 4, 4);
+      exitLine("l2", 7.45);
+
+      // L3: future — arrives from the right
+      tl.fromTo(chars("#l3 .mid"), { opacity: 0, x: 120, skewX: -30 }, { opacity: 1, x: 0, skewX: 0, duration: 0.6, stagger: 0.05, ease: "power4.out" }, 8.1);
+      tl.fromTo(chars("#l3 .big"), { opacity: 0, scale: 0, rotation: (i) => ((i * 37) % 80) - 40 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.7, stagger: { each: 0.045, from: "end" }, ease: "back.out(2)" }, 8.6);
+      floatLine("l3", 8, 4);
+      exitLine("l3", 11.45);
+
+      // L4: breakdown — weightless, letters spread apart slowly
+      tl.fromTo(chars("#l4 .big"), { opacity: 0, filter: "blur(16px)", y: (i) => (i % 2 ? 40 : -40) },
+        { opacity: 1, filter: "blur(0px)", y: 0, duration: 1.2, stagger: 0.06, ease: "sine.out" }, 12.1);
+      const l4 = chars("#l4 .big");
+      tl.fromTo(l4, { x: 0 }, { x: (i) => (i - (l4.length - 1) / 2) * 14, duration: 2.3, ease: "sine.inOut", immediateRender: false }, 13.3);
+      floatLine("l4", 12, 3);
+      tl.to(chars("#l4 .big"), { opacity: 0, scale: 0.2, filter: "blur(10px)", duration: 0.35, stagger: { each: 0.01, from: "center" }, ease: "power3.in" }, 14.5);
+
+      // L5: DROP — slam in, then the second row bounces on every beat
+      tl.fromTo(chars("#l5 .big"), { opacity: 0, scale: 3.2, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.35, stagger: 0.03, ease: "power4.out" }, DROP);
+      tl.fromTo(chars("#l5 .mid"), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.04, ease: "power3.out" }, DROP + 0.5);
+      for (let t = DROP + 1; t < 18.4; t += BEAT) {
+        tl.fromTo(chars("#l5 .mid"), { y: -18 }, { y: 0, duration: 0.4, stagger: 0.02, ease: "bounce.out", immediateRender: false }, t);
+      }
+      floatLine("l5", 15, 4);
+      exitLine("l5", 18.45);
+
+      // L6: question — characters flip in 3D, one per 16th
+      tl.fromTo(chars("#l6 .tag"), { opacity: 0 }, { opacity: 1, duration: 0.05, stagger: 0.04 }, 19.05);
+      tl.fromTo(chars("#l6 .big"), { opacity: 0, rotationY: 90, z: -200 }, { opacity: 1, rotationY: 0, z: 0, duration: 0.5, stagger: 0.125, ease: "power3.out" }, 19.3);
+      tl.fromTo("#l6 .big", { scale: 1 }, { scale: 1.06, duration: 0.25, yoyo: true, repeat: 1, ease: "power1.inOut" }, 21);
+      floatLine("l6", 19, 4);
+      exitLine("l6", 22.45);
+
+      // L7: present — rows converge from opposite sides
+      tl.fromTo(chars("#l7 .mid"), { opacity: 0, x: (i) => (i - 4) * 60, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.8, stagger: 0.03, ease: "expo.out" }, 23.1);
+      tl.fromTo(chars("#l7 .big"), { opacity: 0, y: 120, scale: 0.6 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.08, ease: "back.out(2.2)" }, 23.8);
+      floatLine("l7", 23, 4);
+      exitLine("l7", 26.45);
+
+      // L8: NOW — the final hit, then float off into space
+      tl.fromTo(chars("#l8 .huge"), { opacity: 0, scale: 0.1, rotation: (i) => (i - 1) * 25 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, stagger: 0.08, ease: "back.out(2.5)" }, 27);
+      tl.fromTo(chars("#l8 .tag"), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.05 }, 27.6);
+      floatLine("l8", 27, 3);
+      tl.to("#l8 .drift", { opacity: 0, scale: 0.85, filter: "blur(6px)", duration: 1, ease: "sine.in" }, 28.9);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
